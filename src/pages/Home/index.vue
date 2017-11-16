@@ -27,12 +27,12 @@
         v-for="(date, index) in MonthCardData"
         class="day"
         :class="{
-          invalid: !date.isSameMonth(now),
+          invalid: !date.isSameMonth(currentDate),
           today: date.isSameDay(now) && currentDate.isSameDay(now),
           active: !date.isSameDay(now) && currentDate.isSameDay(date),
           blur: date.isSameDay(now) && !currentDate.isSameDay(date)
         }"
-        @click="currentDate = date"
+        @click="changeDate(date)"
       >
         <span class="num">
           {{ date.getDate() }}
@@ -72,7 +72,6 @@
 
     methods: {
       // 获取 date 相关月的 Date 集合(上下月补齐)
-      // 日必须设置为 1 号
       getMonthCardData(date) {
         // 日期设置为当月 1 号
         let temp = new Date(date)
@@ -91,12 +90,27 @@
         }
         // 补齐下月
         let lastDate = ret[ret.length - 1]
-        let dis = 35 - ret.length
+
+        let dis = 0
+        if (ret.length % 7 !== 0)
+          dis = 7 - ret.length % 7
+
         for (let i = 1; i <= dis; i++) {
           ret.push(lastDate.getOffsetDay(i))
         }
 
         return ret
+      },
+      // 跳转至日期
+      gotoDate(date) {
+        this.MonthCardData = this.getMonthCardData(date)
+        this.currentDate = date
+      },
+
+      changeDate(date) {
+        if (!this.currentDate.isSameMonth(date))
+          this.gotoDate(date)
+        this.currentDate = date
       }
     },
 
@@ -149,7 +163,7 @@
     },
 
     created() {
-      this.MonthCardData = this.getMonthCardData(now)
+      this.gotoDate(now)
     }
   }
 </script>

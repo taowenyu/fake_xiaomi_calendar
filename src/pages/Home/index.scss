@@ -41,6 +41,10 @@
         }
 
         .wrapper {
+          &>span:nth-child(1) {
+            margin-right: .133333rem;
+          }
+
           .caret {
             display: inline-block;
             margin-left: .266667rem;
