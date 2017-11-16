@@ -42,6 +42,10 @@
         </span>
       </div>
     </div>
+
+    <div class="goback" v-show="!currentDate.isSameDay(now)" @click="backToday()">
+       今
+    </div>
   </div>
 </template>
 
@@ -105,6 +109,12 @@
       gotoDate(date) {
         this.MonthCardData = this.getMonthCardData(date)
         this.currentDate = date
+      },
+      // 回到今天
+      backToday() {
+        if (!this.currentDate.isSameMonth(now))
+          this.gotoDate(now)
+        this.currentDate = now
       },
 
       changeDate(date) {
