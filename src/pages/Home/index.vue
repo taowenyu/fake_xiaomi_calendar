@@ -3,13 +3,13 @@
     <header>
       <div class="today">
         <div class="left">
-          <span class="month">{{ currentDate.getMonth() + 1 }} 月</span>
+          <span class="month">{{ currentMonth }}月</span>
         </div>
         <div class="right">
-          <span class="year">{{ currentDate.getFullYear() }} 年</span>
+          <span class="year">{{ currentYear }}年</span>
           <div class="wrapper">
-            <span class="day">{{ currentDate.getDate() }} 日</span>
-            <span>今天<span class="caret">▾</span></span>
+            <span class="day">{{ currentDay }}日</span>
+            <span>{{ durartion }}<span class="caret">▾</span></span>
           </div>
         </div>
       </div>
@@ -24,14 +24,20 @@
     </header>
     <div class="main">
       <div class="day"
-        :class="{invalid: day.invalid, active: (currentMonth === now.getMonth() && day.num === now.getDate())}"
         v-for="(day, index) in calendarData[currentMonth]"
+        :class="{
+          invalid: day.invalid,
+          today: (currentMonth === nowMonth && day.num === nowDay && nowDay === currentDay),
+          blur: (currentMonth === nowMonth && day.num === nowDay && nowDay !== currentDay),
+          active: (day.month === currentMonth && day.num === currentDay && !(currentMonth === nowMonth && day.num === nowDay))
+        }"
+        @click="currentDay = day.num"
       >
         <span class="num">
           {{ day.num }}
         </span>
         <span class="nong" v-if="showNong">
-          初十
+          初一
         </span>
       </div>
     </div>
@@ -54,14 +60,16 @@
 
     data() {
       return {
-        // 当前显示日期
-        currentDate: new Date(),
+        // 当前显示月份
+        currentYear: new Date().getFullYear(),
+        // 当前显示月份
+        currentMonth: new Date().getMonth() + 1,
+        // 当前显示日
+        currentDay: new Date().getDate(),
         // 当前日期
         now: new Date(),
         // 日历数据
         calendarData: [],
-        // 当前显示月份
-        currentMonth: new Date().getMonth(),
       }
     },
 
@@ -73,33 +81,40 @@
 
       // 获取月数据
       getMonthData(m) {
-        let special = (28 + (this.isLeapYear(this.currentDate.getFullYear()) ? 1 : 0))
+        m -= 1
+
+        let special = (28 + (this.isLeapYear(this.currenYear ? 1 : 0)))
 
         let months = [31, special, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
         let temp = []
 
         // 差值
-        let offset = new Date(this.currentDate.getFullYear(), m, 1).getDay()
+        let offset = new Date(this.currentYear, m, 1).getDay()
 
+        // 补齐上月
         for (let i = offset - 1; i >= 0; i--) {
           temp.push({
+            month: m,
             num: (m === 1 ? 31 : months[m - 1]) - i,
             invalid: true
           })
         }
 
+        // 当月
         for (let i = 1; i <= months[m]; i++) {
           temp.push({
+            month: m + 1,
             num: i,
             invalid: false
           })
         }
 
+        // 补齐下月
         let i = 1
-
         while (temp.length < 35) {
           temp.push({
+            month: m + 2,
             num: i++,
             invalid: true
           })
@@ -110,8 +125,25 @@
     },
 
     computed: {
-      isToday() {
+      nowYear() {
+        return new Date().getFullYear()
+      },
 
+      nowMonth() {
+        return new Date().getMonth() + 1
+      },
+
+      nowDay() {
+        return new Date().getDate()
+      },
+
+      durartion() {
+        let temp = this.currentDay - this.nowDay
+        if (temp === 0) {
+          return '今天'
+        } else {
+          return Math.abs(temp) + ' 天' + (temp < 0 ? '前' : '后')
+        }
       }
     },
 
