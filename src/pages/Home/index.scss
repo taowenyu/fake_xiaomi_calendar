@@ -11,7 +11,8 @@
     height: 2.106667rem;
 
     color: #fff;
-    background-color: #1daba7;
+
+    transition: all 800ms;
 
     .today {
       display: flex;
@@ -207,5 +208,7 @@
     color: #fff;
     font-size: .4rem;
     background-color: #1db3af;
+
+    transition: all 800ms;
   }
 }

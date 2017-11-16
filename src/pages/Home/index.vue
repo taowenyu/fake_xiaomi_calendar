@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="home">
-    <header>
+    <header :style="{backgroundColor: colorList[currentMonth]}">
       <div class="today">
         <div class="left">
           <span class="month">{{ currentMonth + 1 }}月</span>
@@ -43,7 +43,11 @@
       </div>
     </div>
 
-    <div class="goback" v-show="!currentDate.isSameDay(now)" @click="backToday()">
+    <div
+      class="goback"
+      v-show="!currentDate.isSameDay(now)"
+      :style="{backgroundColor: colorList[currentMonth]}"
+      @click="backToday()">
        今
     </div>
   </div>
@@ -70,7 +74,22 @@
         // 当前激活日期
         currentDate: now,
         // 当前月数据
-        MonthCardData: []
+        MonthCardData: [],
+        // 背景色列表
+        colorList: [
+          'rgb(70, 153, 217)',
+          'rgb(95, 128, 218)',
+          'rgb(116, 119, 209)',
+          'rgb(136, 116, 205)',
+          'rgb(116, 119, 209)',
+          'rgb(95, 128, 218)',
+          'rgb(70, 153, 217)',
+          'rgb(59, 171, 215)',
+          'rgb(41, 173, 167)',
+          'rgb(64, 178, 129)',
+          'rgb(79, 183, 108)',
+          'rgb(107, 177, 86)'
+        ]
       }
     },
 
