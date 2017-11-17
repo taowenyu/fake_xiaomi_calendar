@@ -1,4 +1,5 @@
 .home {
+  position: relative;
   width: 100%;
   height: 100%;
 
@@ -10,7 +11,8 @@
     height: 2.106667rem;
 
     color: #fff;
-    background-color: #1daba7;
+
+    transition: all 800ms;
 
     .today {
       display: flex;
@@ -122,12 +124,6 @@
       width: 1.253333rem;
       height: 1.253333rem;
 
-      &.blur {
-        .num {
-          color: #1db3af;
-        }
-      }
-
       &.active {
         &:after {
           content: '';
@@ -137,8 +133,14 @@
           left: 0;
           width: 100%;
           height: 100%;
-          border: .026667rem solid #b5b5b5;
+          border: 1px solid #b5b5b5;
           border-radius: .626667rem;
+        }
+      }
+
+      &.blur {
+        .num {
+          color: #1db3af;
         }
       }
 
@@ -189,5 +191,24 @@
         color: #b5b5b5;
       }
     }
+  }
+
+  .goback {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    right: .266667rem;
+    bottom: .266667rem;
+
+    width: 1.253333rem;
+    height: 1.253333rem;
+    border-radius: 1.253333rem;
+
+    color: #fff;
+    font-size: .4rem;
+    background-color: #1db3af;
+
+    transition: all 800ms;
   }
 }

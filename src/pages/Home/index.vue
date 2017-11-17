@@ -1,15 +1,15 @@
 <template lang="html">
   <div class="home">
-    <header>
+    <header :style="{backgroundColor: colorList[currentMonth]}">
       <div class="today">
         <div class="left">
-          <span class="month">{{ currentMonth }}月</span>
+          <span class="month">{{ currentMonth + 1 }}月</span>
         </div>
         <div class="right">
           <span class="year">{{ currentYear }}年</span>
           <div class="wrapper">
             <span class="day">{{ currentDay }}日</span>
-            <span>{{ durartion }}<span class="caret">▾</span></span>
+            <span>{{ distance }}<span class="caret">▾</span></span>
           </div>
         </div>
       </div>
@@ -23,134 +23,176 @@
       </div>
     </header>
     <div class="main">
-      <div class="day"
-        v-for="(day, index) in calendarData[currentMonth]"
+      <div
+        v-for="(date, index) in MonthCardData"
+        class="day"
         :class="{
-          invalid: day.invalid,
-          today: (currentMonth === nowMonth && day.num === nowDay && nowDay === currentDay),
-          blur: (currentMonth === nowMonth && day.num === nowDay && nowDay !== currentDay),
-          active: (day.month === currentMonth && day.num === currentDay && !(currentMonth === nowMonth && day.num === nowDay))
+          invalid: !date.isSameMonth(currentDate),
+          today: date.isSameDay(now) && currentDate.isSameDay(now),
+          active: !date.isSameDay(now) && currentDate.isSameDay(date),
+          blur: date.isSameDay(now) && !currentDate.isSameDay(date)
         }"
-        @click="currentDay = day.num"
+        @click="changeDate(date)"
       >
         <span class="num">
-          {{ day.num }}
+          {{ date.getDate() }}
         </span>
-        <span class="nong" v-if="showNong">
-          初一
+        <span class="nong" v-show="showNong">
+          初十
         </span>
       </div>
+    </div>
+
+    <div
+      class="goback"
+      v-show="!currentDate.isSameDay(now)"
+      :style="{backgroundColor: colorList[currentMonth]}"
+      @click="backToday()">
+       今
     </div>
   </div>
 </template>
 
 <script>
-  import Moment from 'moment'
+  // 获取当前时间
+  let now = new Date()
+
+  import utils from './utils'
 
   export default {
     props: {
-      // 显示农历？
+      // 农历可见性
       showNong: {
         type: Boolean,
         default: false
-      },
-      // 显示节日?
-      showFestival: false
+      }
     },
 
     data() {
       return {
-        // 当前显示月份
-        currentYear: new Date().getFullYear(),
-        // 当前显示月份
-        currentMonth: new Date().getMonth() + 1,
-        // 当前显示日
-        currentDay: new Date().getDate(),
-        // 当前日期
-        now: new Date(),
-        // 日历数据
-        calendarData: [],
+        now: now,
+        // 当前激活日期
+        currentDate: now,
+        // 当前月数据
+        MonthCardData: [],
+        // 背景色列表
+        colorList: [
+          'rgb(70, 153, 217)',
+          'rgb(95, 128, 218)',
+          'rgb(116, 119, 209)',
+          'rgb(136, 116, 205)',
+          'rgb(116, 119, 209)',
+          'rgb(95, 128, 218)',
+          'rgb(70, 153, 217)',
+          'rgb(59, 171, 215)',
+          'rgb(41, 173, 167)',
+          'rgb(64, 178, 129)',
+          'rgb(79, 183, 108)',
+          'rgb(107, 177, 86)'
+        ]
       }
     },
 
     methods: {
-      // 判断是否为闰年
-      isLeapYear(y) {
-        return (y % 400 === 0 || (y % 4 === 0 && y % 100))
+      // 获取 date 相关月的 Date 集合(上下月补齐)
+      getMonthCardData(date) {
+        // 日期设置为当月 1 号
+        let temp = new Date(date)
+        temp.setDate(1)
+
+        let Feb = (28 + (temp.isLeapYear() ? 1 : 0))
+        let months = [31, Feb, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+        let ret = []
+        // 补齐上月
+        for (let i = temp.getDay(); i > 0; i--) {
+          ret.push(temp.getOffsetDay(-i))
+        }
+        // 本月
+        for (let i = 0; i < months[temp.getMonth()]; i++) {
+          ret.push(temp.getOffsetDay(i))
+        }
+        // 补齐下月
+        let lastDate = ret[ret.length - 1]
+
+        let dis = 0
+        if (ret.length % 7 !== 0)
+          dis = 7 - ret.length % 7
+
+        for (let i = 1; i <= dis; i++) {
+          ret.push(lastDate.getOffsetDay(i))
+        }
+
+        return ret
+      },
+      // 跳转至日期
+      gotoDate(date) {
+        this.MonthCardData = this.getMonthCardData(date)
+        this.currentDate = date
+      },
+      // 回到今天
+      backToday() {
+        if (!this.currentDate.isSameMonth(now))
+          this.gotoDate(now)
+        this.currentDate = now
       },
 
-      // 获取月数据
-      getMonthData(m) {
-        m -= 1
-
-        let special = (28 + (this.isLeapYear(this.currenYear ? 1 : 0)))
-
-        let months = [31, special, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-
-        let temp = []
-
-        // 差值
-        let offset = new Date(this.currentYear, m, 1).getDay()
-
-        // 补齐上月
-        for (let i = offset - 1; i >= 0; i--) {
-          temp.push({
-            month: m,
-            num: (m === 1 ? 31 : months[m - 1]) - i,
-            invalid: true
-          })
-        }
-
-        // 当月
-        for (let i = 1; i <= months[m]; i++) {
-          temp.push({
-            month: m + 1,
-            num: i,
-            invalid: false
-          })
-        }
-
-        // 补齐下月
-        let i = 1
-        while (temp.length < 35) {
-          temp.push({
-            month: m + 2,
-            num: i++,
-            invalid: true
-          })
-        }
-
-        return temp
+      changeDate(date) {
+        if (!this.currentDate.isSameMonth(date))
+          this.gotoDate(date)
+        this.currentDate = date
       }
     },
 
     computed: {
-      nowYear() {
-        return new Date().getFullYear()
-      },
+      // 当前天
+      currentDay: {
+        get() {
+          return this.currentDate.getDate()
+        },
 
-      nowMonth() {
-        return new Date().getMonth() + 1
+        set(val) {
+          this.currentDate.setDate(val)
+        }
       },
+      // 当前月份
+      currentMonth: {
+        get() {
+          return this.currentDate.getMonth()
+        },
 
-      nowDay() {
-        return new Date().getDate()
+        set(val) {
+          this.currentDate.setMonth(val)
+        }
       },
+      // 当前年
+      currentYear: {
+        get() {
+          return this.currentDate.getFullYear()
+        },
 
-      durartion() {
-        let temp = this.currentDay - this.nowDay
-        if (temp === 0) {
+        set(val) {
+          this.currentDate.setFullYear(val)
+        }
+      },
+      // 相差天数
+      distance() {
+        let days = now.getDistance(this.currentDate)
+        if (days === 0) {
           return '今天'
-        } else {
-          return Math.abs(temp) + ' 天' + (temp < 0 ? '前' : '后')
+        }
+
+        if (days > 0) {
+          return (days + '天后')
+        }
+
+        if (days < 0) {
+          return (-days + '天前')
         }
       }
     },
 
     created() {
-      for (let i = 0; i < 12; i++) {
-        this.calendarData.push(this.getMonthData(i))
-      }
+      this.gotoDate(now)
     }
   }
 </script>
