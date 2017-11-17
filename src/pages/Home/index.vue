@@ -53,7 +53,10 @@
     </div>
 
     <popover v-model="menuVisible" direction="up">
-      <v-menu @close="menuVisible = false"></v-menu>
+      <v-menu @close="menuVisible = false" @showSelector="dateSelectorVisible = true"></v-menu>
+    </popover>
+    <popover v-model="dateSelectorVisible" direction="bottom">
+      <date-selector v-model="currentDate" @cancel="dateSelectorVisible = false" @input="dateSelectorVisible = false"></date-selector>
     </popover>
   </div>
 </template>
@@ -61,7 +64,7 @@
 <script>
   import utils from './utils'
 
-  import { popover, vMenu } from '@/components'
+  import { popover, vMenu, dateSelector } from '@/components'
 
   // 获取当前时间
   let now = new Date()
@@ -69,7 +72,8 @@
   export default {
     components: {
       popover,
-      vMenu
+      vMenu,
+      dateSelector
     },
 
     props: {
@@ -103,7 +107,9 @@
           'rgb(107, 177, 86)'
         ],
         // 菜单可见性
-        menuVisible: false
+        menuVisible: false,
+        // 日期选择器可见性
+        dateSelectorVisible: false
       }
     },
 

@@ -9,6 +9,7 @@
       <div class="cell"
         v-for="(item, index) in menu"
         :style="{animationDuration: (menu.length - index) * 130 + 'ms'}"
+        @click="handleClick(index)"
       >
         <span>{{ item }}</span>
       </div>
@@ -26,7 +27,19 @@
           '跳转到指定日期',
           '刷新',
           '设置'
-        ]
+        ],
+
+        // 日期选择器可见性
+        dateSelectorVisible: false
+      }
+    },
+
+    methods: {
+      handleClick(index) {
+        if (index === 2) {
+          this.$emit('showSelector')
+          this.$emit('close')
+        }
       }
     }
   }
@@ -62,7 +75,7 @@
       height: .6rem;
 
       span {
-        height: .04rem;
+        height: .03rem;
         width: .6rem;
         background-color: #495857;
 
