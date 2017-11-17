@@ -30,8 +30,9 @@
           invalid: !date.isSameMonth(currentDate),
           today: date.isSameDay(now) && currentDate.isSameDay(now),
           active: !date.isSameDay(now) && currentDate.isSameDay(date),
-          blur: date.isSameDay(now) && !currentDate.isSameDay(date)
+          blur: date.isSameDay(now) && !currentDate.isSameDay(date),
         }"
+        :style="{backgroundColor: (date.isSameDay(now) && currentDate.isSameDay(now)) ? colorList[currentMonth] : '#fff'}"
         @click="changeDate(date)"
       >
         <span class="num">
