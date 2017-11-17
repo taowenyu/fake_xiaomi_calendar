@@ -13,7 +13,7 @@
           </div>
         </div>
       </div>
-      <div class="button">
+      <div class="button" @click="menuVisible = true">
         <span class="dot"></span>
         <span class="dot"></span>
         <span class="dot"></span>
@@ -50,16 +50,27 @@
       @click="backToday()">
        今
     </div>
+
+    <popover v-model="menuVisible" direction="up">
+      <v-menu @close="menuVisible = false"></v-menu>
+    </popover>
   </div>
 </template>
 
 <script>
+  import utils from './utils'
+
+  import { popover, vMenu } from '@/components'
+
   // 获取当前时间
   let now = new Date()
 
-  import utils from './utils'
-
   export default {
+    components: {
+      popover,
+      vMenu
+    },
+
     props: {
       // 农历可见性
       showNong: {
@@ -89,7 +100,9 @@
           'rgb(64, 178, 129)',
           'rgb(79, 183, 108)',
           'rgb(107, 177, 86)'
-        ]
+        ],
+        // 菜单可见性
+        menuVisible: false
       }
     },
 
