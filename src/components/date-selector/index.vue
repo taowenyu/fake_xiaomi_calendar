@@ -8,25 +8,13 @@
 
     <section class="main">
       <div class="year">
-        <ul>
-          <li v-for="i in (2037 - 1970 + 1)">
-            {{ 1969 + i }}
-          </li>
-        </ul>
+        <slide-bar :range="[1970, 2037]" unit="年" v-model="currentYear"></slide-bar>
       </div>
       <div class="month">
-        <ul>
-          <li v-for="i in 12">
-            {{ i }}
-          </li>
-        </ul>
+        <slide-bar :range="[1, 12]" unit="月"></slide-bar>
       </div>
       <div class="day">
-        <ul>
-          <li v-for="i in totalDays">
-            {{ i }}
-          </li>
-        </ul>
+        <slide-bar :range="[1, totalDays]" unit="日" v-model="currentDay"></slide-bar>
       </div>
     </section>
 
@@ -42,7 +30,13 @@
 </template>
 
 <script>
+  import slideBar from './components/slide-bar.vue'
+
   export default {
+    components: {
+      slideBar
+    },
+
     props: {
       value: Date
     },
@@ -112,17 +106,18 @@
 
 <style lang="scss" scoped>
   .date-selector {
-    margin: 0 auto;
     width: 9.573333rem;
-    border-radius: .133333rem;
+    margin: 0 auto;
     margin-bottom: .213333rem;
     padding-top: .826667rem;
+    border-radius: .133333rem;
 
     background-color: #fff;
 
     .title {
       margin-top: 0;
       margin-bottom: 1.066667rem;
+
       font-size: .466667rem;
       text-align: center;
     }
@@ -139,31 +134,6 @@
       display: flex;
       height: 5.6rem;
       border-top: .026667rem solid #e4e4e4;
-
-      ul {
-        width: 100%;
-        height: 100%;
-        padding: 0;
-        margin: 0;
-
-        overflow-y: scroll;
-        list-style: none;
-
-        li {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-
-          height: 1.413333rem;
-          font-size: .333333rem;
-          color: #9d9d9d;
-
-          &.active {
-            color: #00a4ff;
-            font-size: .4rem;
-          }
-        }
-      }
 
       .year {
         width: 35%;

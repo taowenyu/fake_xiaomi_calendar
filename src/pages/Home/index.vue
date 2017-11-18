@@ -56,7 +56,12 @@
       <v-menu @close="menuVisible = false" @showSelector="dateSelectorVisible = true"></v-menu>
     </popover>
     <popover v-model="dateSelectorVisible" direction="bottom">
-      <date-selector v-model="currentDate" @cancel="dateSelectorVisible = false" @input="dateSelectorVisible = false"></date-selector>
+      <date-selector
+        v-model="currentDate"
+        @cancel="dateSelectorVisible = false"
+        @input="dateSelectorVisible = false"
+      >
+      </date-selector>
     </popover>
   </div>
 </template>
