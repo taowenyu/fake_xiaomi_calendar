@@ -57,9 +57,8 @@
     </popover>
     <popover v-model="dateSelectorVisible" direction="bottom">
       <date-selector
-        v-model="currentDate"
         @cancel="dateSelectorVisible = false"
-        @input="dateSelectorVisible = false"
+        @input="handleDateInput($event)"
       >
       </date-selector>
     </popover>
@@ -89,11 +88,17 @@
       }
     },
 
+    watch: {
+      currentDate(val) {
+
+      }
+    },
+
     data() {
       return {
-        now: now,
+        now: new Date(),
         // 当前激活日期
-        currentDate: now,
+        currentDate: null,
         // 当前月数据
         MonthCardData: [],
         // 背景色列表
@@ -165,6 +170,12 @@
         if (!this.currentDate.isSameMonth(date))
           this.gotoDate(date)
         this.currentDate = date
+      },
+
+      // 处理日期输入
+      handleDateInput(val) {
+        this.dateSelectorVisible = false
+        this.gotoDate(val)
       }
     },
 

@@ -3,7 +3,7 @@
     <h3 class="title">选择日期</h3>
 
     <p class="current-date">
-      {{ currentYear }}年{{ currentMonth + 1 }}月{{ currentDay }}日星期{{ currentWeek }}
+      {{ currentYear }}年{{ currentMonth }}月{{ currentDay }}日星期{{ currentWeek }}
     </p>
 
     <section class="main">
@@ -11,7 +11,7 @@
         <slide-bar :range="[1970, 2037]" unit="年" v-model="currentYear"></slide-bar>
       </div>
       <div class="month">
-        <slide-bar :range="[1, 12]" unit="月"></slide-bar>
+        <slide-bar :range="[1, 12]" unit="月" v-model="currentMonth"></slide-bar>
       </div>
       <div class="day">
         <slide-bar :range="[1, totalDays]" unit="日" v-model="currentDay"></slide-bar>
@@ -22,7 +22,7 @@
       <span class="cancel" @click="$emit('cancel')">
         取消
       </span>
-      <span class="comfirm">
+      <span class="comfirm" @click="$emit('input', currentDate)">
         确定
       </span>
     </footer>
@@ -43,13 +43,7 @@
 
     data() {
       return {
-        currentDate: this.value
-      }
-    },
-
-    watch: {
-      value() {
-        this.currentDate = this.value
+        currentDate: new Date(1970, 0, 1)
       }
     },
 
@@ -65,17 +59,17 @@
         },
 
         set(val) {
-          this.currentDate.setDate(val)
+          this.currentDate = new Date(this.currentDate.setDate(val))
         }
       },
-      // 当前月份
+      // 当前月份（修正）
       currentMonth: {
         get() {
-          return this.currentDate.getMonth()
+          return this.currentDate.getMonth() + 1
         },
 
         set(val) {
-          this.currentDate.setMonth(val)
+          this.currentDate = new Date(this.currentDate.setMonth(val - 1))
         }
       },
       // 当前年
@@ -85,7 +79,7 @@
         },
 
         set(val) {
-          this.currentDate.setFullYear(val)
+          this.currentDate = new Date(this.currentDate.setFullYear(val))
         }
       },
       // 星期
@@ -150,7 +144,7 @@
       display: flex;
       width: 100%;
       height: 1.44rem;
-      border-top: 2px solid #e4e4e4;
+      border-top: .026667rem solid #e4e4e4;
       border-radius: 0 0 .133333rem .133333rem;
       background-color: #f2f2f2;
 
@@ -166,7 +160,7 @@
 
       .comfirm {
         color: #00a8ff;
-        border-left: 2px solid #e4e4e4;
+        border-left: .026667rem solid #e4e4e4;
       }
     }
   }

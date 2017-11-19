@@ -4,7 +4,7 @@
       <li></li>
       <li></li>
 
-      <li v-for="i in values">
+      <li v-for="i in values" @scroll="test()">
         <span>{{ i }}</span>
       </li>
 
@@ -35,22 +35,37 @@
 
     data() {
       return {
-       // 值列表
-        values: []
+        // 值列表
+        values: [],
+        // 当前选中值
+        currentValue: 0
+      }
+    },
+
+    watch: {
+      currentValue(val) {
+        this.$emit('input', val)
       }
     },
 
     methods: {
       handleScroll(e) {
+        // 单个高度
         let height = this.$refs.ul.clientHeight / 5
+        this.currentValue = this.values[Math.floor(this.$refs.ul.scrollTop / height + 0.5)]
 
+        this.$emit('input', this.currentValue)
       }
     },
 
-    created() {
+    mounted() {
+      let index = 0
       // 初始化值列表
       if (this.range) {
-        for (let i = this.range[0]; i <= this.range[1]; i++) {
+        for (let i = this.range[0], j = 0; i <= this.range[1]; i++, j++) {
+          if (i === this.value) {
+            index = j
+          }
           this.values.push(i)
         }
       }
